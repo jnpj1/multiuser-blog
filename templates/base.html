@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Vacation Blog</title>
+		<script src="/static/app.js"></script>
+	</head>
+	<body>
+		<header>
+			<div class="blog-title">
+				<p>Vacation Stories</p>
+			</div>
+			<div class="signin">
+				{% block signin %}
+				{% endblock %}
+			</div>
+		</header>
+		{% block content %}
+		{% endblock %}
+	</body>
+</html>
