@@ -1,0 +1,18 @@
+<article class="post">
+	<div class="post-header">
+		<div class="post-title">
+			<h2>{{post.subject}}</h2>
+		</div>
+		<div class="post-info">
+			<h4 class="post-author">Post by {{post.author}}</h4>
+			<h4 class="post-time">{{post.created}}</h4>
+		</div>
+	</div>
+	<div class="post-content">
+		<p>{{post.render_text | safe}}</p>
+	</div>
+	<div class="post-footer">
+		<p>Last Modified: {{post.modified}}</p>
+		<p>Likes: {{post.likes}}</p>
+	</div>
+</article>

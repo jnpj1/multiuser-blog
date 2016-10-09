@@ -14,7 +14,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), a
 SECRET = '0Ix.cF#2h1S?C*fQ6'
 
 def make_salt():
-	return ''.join(random.choice(string.letters) for x in xrange(5))
+	return ''.join(random.choice(letters) for x in xrange(5))
 
 def make_pw_hash(name, pw, salt = None):
 	if not salt:
@@ -37,10 +37,14 @@ def check_secure_val(h):
 	if h == make_secure_val(val):
 		return val
 
+def render_str(template, **params):
+	t = jinja_env.get_template(template)
+	return t.render(params)
+
 class User(db.Model):
 	username = db.StringProperty(required = True)
 	password_hash = db.StringProperty(required = True)
-	email = db.EmailProperty()
+	email = db.StringProperty()
 
 	@classmethod
 	def by_id(cls, uid):
@@ -94,6 +98,7 @@ class Handler(webapp2.RequestHandler):
 		self.response.out.write(*a, **kw)
 
 	def render_str(self, template, **params):
+		params['user'] = self.user
 		t = jinja_env.get_template(template)
 		return t.render(params)
 
@@ -125,7 +130,6 @@ class MainPage(Handler):
 	def get(self):
 		all_posts = Post.all().order('-created')
 		posts = all_posts.fetch(limit=10)
-		self.render('signinstatus.html', user = self.user)
 		self.render('mainpage.html', posts = posts)
 
 	def post(self):
@@ -142,24 +146,24 @@ class MainPage(Handler):
 			password_error = 'Please enter password.'
 
 		if username_error or password_error:
-			self.render('signinstatus.html', username = username,
+			self.render('mainpage.html', username = username,
 				username_error = username_error,
 				password_error = password_error)
 		else:
 			user = User.login_user(username, password)
 
 			if user:
-				self.render('signinstatus.html', user = user)
 				self.login_cookie(user)
+				self.redirect('/')
 			else:
-				self.render('signinstatus.html', signin_error = True)
+				self.render('mainpage.html', signin_error = True)
 
 class RegistrationPage(Handler):
 	def get(self):
-		if user:
+		if self.user:
 			self.redirect('/')
 		else:
-			self.render('loginform.html')
+			self.render('registration.html')
 
 	def post(self):
 		username = self.request.get('username')
@@ -201,32 +205,60 @@ class RegistrationPage(Handler):
 			error_check = True
 
 		if error_check:
-			self.render('loginform.html', **params)
+			self.render('registration.html', **params)
+		else:
+			# Check to see if user already exists.
+			# If not, register user.
+			user = User.by_username(username)
+			if user:
+				existing_error = "That username already exists."
+				self.render('registration.html', username = username,
+					existing_error = existing_error)
+			else:
+				user = User.register_user(username, password, email)
+				user.put()
+				self.login_cookie(user)
+				self.render('registration.html')
+				self.redirect('/')
 
-		# if username_cookie_str:
-		# 	current_user = username_cookie_str.split('|')[0]
-		# 	if current_user == username:
-		# 		username_error = "That user already exists."
+class Logout(Handler):
+	def get(self):
+		self.logout_cookie()
+		self.redirect('/')
 
-		# if not username_error:
-		# 	new_username_cookie = str(make_secure_val(username))
-		# 	self.response.headers.add_header('Set-Cookie', 'username=%s;Path=/' % new_username_cookie)
+class CreatePost(Handler):
+	def get(self):
+		if self.user:
+			self.render('signinstatus.html')
+			self.render('newpost.html')
+		else:
+			self.redirect('/')
 
-		# if verify and verify_check:
-		# 	new_password_cookie = make_pw_hash(username, password)
-		# 	self.response.headers.add_header('Set-Cookie', 'password=%s;Path=/' % new_password_cookie)
-		# else:
-		# 	verify_error = "Your passwords didn't match."
+	def post(self):
+		subject = self.request.get('subject')
+		content = self.request.get('content')
 
+		subject_error = ''
+		content_error = ''
 
-		# if username_error or password_error or email_error or verify_error:
-		# 	self.render('loginform.html', username = username, email = email,
-		# 		username_error = username_error, password_error = password_error,
-		# 		email_error = email_error, verify_error = verify_error)
-		# else:
-		# 	self.redirect('/welcome')
+		if not subject:
+			subject_error = 'Please enter a subject.'
+		if not content:
+			content_error = 'Please enter content for the post.'
+		if subject_error or content_error:
+			# self.render('signinstatus.html', user = self.user)
+			self.render('newpost.html', subject_error = subject_error,
+				content_error = content_error, subject = subject,
+				content = content)
+		else:
+			post = Post(author = self.user.username, subject = subject,
+				content = content, likes = 0)
+			post.put()
+			self.redirect('/')
 
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
+								('/logout', Logout),
+								('/newpost', CreatePost)
 								],
 								debug = True)
