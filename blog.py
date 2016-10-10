@@ -247,7 +247,7 @@ class Logout(Handler):
 class CreatePost(Handler):
 	def get(self):
 		if self.user:
-			self.render('newpost.html')
+			self.render('newpost.html', new_post = True)
 		else:
 			self.redirect('/')
 
@@ -270,21 +270,51 @@ class CreatePost(Handler):
 			post = Post(author = self.user.username, subject = subject,
 				content = content, likes = 0)
 			post.put()
-			self.redirect('/')
+			self.redirect('/post/%s?new_post=true' % post.key().id())
 
 class PostPermalink(Handler):
 	def get(self, post_id):
-		self.render('permalink.html', post = Post.by_id(post_id))
+		new_post = self.request.get('new_post')
+		edited_post = self.request.get('edited_post')
+		self.render('permalink.html', post = Post.by_id(post_id),
+			new_post = new_post, edited_post = edited_post)
 
 	def post(self, post_id):
 		if self.login_check():
 			self.login_handler('permalink.html', post = Post.by_id(post_id))
+
+class EditPost(Handler):
+	def get(self, post_id):
+		post = Post.by_id(post_id)
+		if self.user:
+			if post.author == self.user.username:
+				self.render('newpost.html', edit_post = True, author = post.author,
+					subject = post.subject, content = post.content, created = post.created)
+			else:
+				self.redirect('/')
+		else:
+			self.redirect('/')
+
+	def post(self, post_id):
+		subject = self.request.get('subject')
+		content = self.request.get('content')
+		post = Post.by_id(post_id)
+
+		if subject:
+			post.subject = subject
+		if content:
+			post.content = content
+
+		post.put()
+		self.redirect('/post/%s?edited_post=true' % post.key().id())
+
 
 
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
 								('/logout', Logout),
 								('/newpost', CreatePost),
-								('/post/(\d+)', PostPermalink)
+								('/post/(\d+)', PostPermalink),
+								('/edit/(\d+)', EditPost)
 								],
 								debug = True)

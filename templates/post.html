@@ -14,7 +14,9 @@
 		<p>{{post.render_text | safe}}</p>
 	</div>
 	<div class="post-footer">
-		<p>Last Modified: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
+		{% if not post.modified == post.created %}
+			<p>Modified on: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
+		{% endif %}
 		<p>Likes: {{post.likes}}</p>
 		<i class="fa fa-thumbs-up fa-lg"></i>
 		<i class="fa fa-thumbs-down fa-lg"></i>

@@ -2,6 +2,14 @@
 
 {% block form %}
 
+{% if new_post %}
+	<h2>Create New Post</h2>
+{% elif edit_post %}
+	<h2>Edit Post</h2>
+	<p>{{subject}}</p>
+	<p>Originally created: {{created.strftime("%b %d")}} at {{created.strftime("%I:%M")}}</p>
+{% endif %}
+
 <form class="new-post-form" method="post">
 	<label class="post-subject">Subject
 		<input type="text" name="subject" value="{{subject}}">

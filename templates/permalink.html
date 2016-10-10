@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+	{% if new_post %}
+		<div class="new-post-success">
+			<p>Post created successfully!</p>
+		</div>
+	{% elif edited_post %}
+		<div class="new-post-success">
+			<p>Post edited successfully!</p>
+		</div>
+
+	{% endif %}
 	{{post.render() | safe}}
 	{% if post.author == user.username %}
 		<div class="edit-delete-box">

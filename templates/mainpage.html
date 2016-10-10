@@ -4,7 +4,7 @@
 
 <main>
 	<div>
-		<button>Add yours!</button>
+		<button type="button" onclick="location.href='/newpost'">Add yours!</button>
 	</div>
 	{% for post in posts %}
 		{{post.render() | safe}}
