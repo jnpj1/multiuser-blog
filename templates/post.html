@@ -1,18 +1,23 @@
 <article class="post">
 	<div class="post-header">
 		<div class="post-title">
-			<h2>{{post.subject}}</h2>
+			<h2><a href="/post/{{post.key().id()}}">{{post.subject}}</a></h2>
 		</div>
 		<div class="post-info">
 			<h4 class="post-author">Post by {{post.author}}</h4>
-			<h4 class="post-time">{{post.created}}</h4>
+			<h4 class="post-time">
+				{{post.created.strftime("%b %d")}} at {{post.created.strftime("%I:%M")}}
+			</h4>
 		</div>
 	</div>
 	<div class="post-content">
 		<p>{{post.render_text | safe}}</p>
 	</div>
 	<div class="post-footer">
-		<p>Last Modified: {{post.modified}}</p>
+		<p>Last Modified: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
 		<p>Likes: {{post.likes}}</p>
+		<i class="fa fa-thumbs-up fa-lg"></i>
+		<i class="fa fa-thumbs-down fa-lg"></i>
+		<p>{{like_error}}</p>
 	</div>
 </article>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{{post.render() | safe}}
+	{% if post.author == user.username %}
+		<div class="edit-delete-box">
+			<a href="/edit/{{post.key().id()}}">Edit/Delete Post</a>
+		</div>
+	{% endif %}
+{% endblock %}

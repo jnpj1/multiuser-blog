@@ -3,6 +3,7 @@
 	<head>
 		<title>Vacation Blog</title>
 		<script src="/static/app.js"></script>
+		<script src="https://use.fontawesome.com/f650e03175.js"></script>
 	</head>
 	<body>
 		<header>
@@ -21,7 +22,7 @@
 						<form class="login-form" method="post">
 							<input type="text" name="username" placeholder="Username" value="{{username}}">
 							<input type="password" name="password" placeholder="Password">
-							<input type="submit">
+							<input type="submit" name="login-form">
 						</form>
 						<div class="login-error">
 							{% if username_error %}

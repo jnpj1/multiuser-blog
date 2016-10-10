@@ -5,6 +5,7 @@ import re
 import hashlib
 import hmac
 import random
+import datetime
 from string import letters
 from google.appengine.ext import db
 
@@ -126,6 +127,32 @@ class Handler(webapp2.RequestHandler):
 		uid = self.read_secure_cookie('user_id')
 		self.user = uid and User.by_id(int(uid))
 
+	def login_handler(self):
+		username = self.request.get('username')
+		password = self.request.get('password')
+
+		username_error = ''
+		password_error = ''
+
+		if not username:
+			username_error = 'Please enter username.'
+
+		if not password:
+			password_error = 'Please enter password.'
+
+		if username_error or password_error:
+			self.render('mainpage.html', username = username,
+				username_error = username_error,
+				password_error = password_error)
+		else:
+			user = User.login_user(username, password)
+
+			if user:
+				self.login_cookie(user)
+				self.redirect('/')
+			else:
+				self.render('mainpage.html', signin_error = True)
+
 class MainPage(Handler):
 	def get(self):
 		all_posts = Post.all().order('-created')
@@ -246,7 +273,6 @@ class CreatePost(Handler):
 		if not content:
 			content_error = 'Please enter content for the post.'
 		if subject_error or content_error:
-			# self.render('signinstatus.html', user = self.user)
 			self.render('newpost.html', subject_error = subject_error,
 				content_error = content_error, subject = subject,
 				content = content)
@@ -256,9 +282,18 @@ class CreatePost(Handler):
 			post.put()
 			self.redirect('/')
 
+class PostPermalink(Handler):
+	def get(self, post_id):
+		post = Post.get_by_id(int(post_id))
+		self.render('permalink.html', post = post)
+
+	def post(self, post_id):
+		self.write(self.request)
+
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
 								('/logout', Logout),
-								('/newpost', CreatePost)
+								('/newpost', CreatePost),
+								('/post/(\d+)', PostPermalink)
 								],
 								debug = True)
