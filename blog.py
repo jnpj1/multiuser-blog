@@ -77,6 +77,15 @@ class Post(db.Model):
 	modified = db.DateTimeProperty(auto_now = True)
 	likes = db.IntegerProperty(required = True)
 
+	@classmethod
+	def by_id(cls, post_id):
+		return Post.get_by_id(int(post_id))
+
+	@classmethod
+	def most_recent(cls):
+		recent_posts = Post.all().order('-created')
+		return recent_posts.fetch(limit=10)
+
 	def render(self):
 		self.render_text = self.content.replace('\n', '<br>')
 		return render_str('post.html', post = self)
@@ -95,6 +104,11 @@ class Like(db.Model):
 	value = db.IntegerProperty(required = True)
 
 class Handler(webapp2.RequestHandler):
+	def initialize(self, *a, **kw):
+		webapp2.RequestHandler.initialize(self, *a, **kw)
+		uid = self.read_secure_cookie('user_id')
+		self.user = uid and User.by_id(int(uid))
+
 	def write(self, *a, **kw):
 		self.response.out.write(*a, **kw)
 
@@ -122,68 +136,45 @@ class Handler(webapp2.RequestHandler):
 	def logout_cookie(self):
 		self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
-	def initialize(self, *a, **kw):
-		webapp2.RequestHandler.initialize(self, *a, **kw)
-		uid = self.read_secure_cookie('user_id')
-		self.user = uid and User.by_id(int(uid))
+	def login_check(self):
+		if self.request.get('login-form'):
+			return True
 
-	def login_handler(self):
+	def login_handler(self, template, **params):
 		username = self.request.get('username')
 		password = self.request.get('password')
+		path = self.request.path
+		has_error = False
 
-		username_error = ''
-		password_error = ''
+		new_params = dict(params)
 
 		if not username:
-			username_error = 'Please enter username.'
+			new_params['username_error'] = 'Please enter username.'
+			has_error = True
 
 		if not password:
-			password_error = 'Please enter password.'
+			new_params['password_error'] = 'Please enter password.'
+			new_params['username'] = username
+			has_error = True
 
-		if username_error or password_error:
-			self.render('mainpage.html', username = username,
-				username_error = username_error,
-				password_error = password_error)
+		if has_error:
+			self.render(template, **new_params)
 		else:
 			user = User.login_user(username, password)
 
 			if user:
 				self.login_cookie(user)
-				self.redirect('/')
+				self.redirect(path, params)
 			else:
-				self.render('mainpage.html', signin_error = True)
+				new_params['signin_error'] = True
+				self.render(template, **new_params)
 
 class MainPage(Handler):
 	def get(self):
-		all_posts = Post.all().order('-created')
-		posts = all_posts.fetch(limit=10)
-		self.render('mainpage.html', posts = posts)
+		self.render('mainpage.html', posts = Post.most_recent())
 
 	def post(self):
-		username = self.request.get('username')
-		password = self.request.get('password')
-
-		username_error = ''
-		password_error = ''
-
-		if not username:
-			username_error = 'Please enter username.'
-
-		if not password:
-			password_error = 'Please enter password.'
-
-		if username_error or password_error:
-			self.render('mainpage.html', username = username,
-				username_error = username_error,
-				password_error = password_error)
-		else:
-			user = User.login_user(username, password)
-
-			if user:
-				self.login_cookie(user)
-				self.redirect('/')
-			else:
-				self.render('mainpage.html', signin_error = True)
+		self.login_handler('mainpage.html', posts = Post.most_recent())
 
 class RegistrationPage(Handler):
 	def get(self):
@@ -256,7 +247,6 @@ class Logout(Handler):
 class CreatePost(Handler):
 	def get(self):
 		if self.user:
-			self.render('signinstatus.html')
 			self.render('newpost.html')
 		else:
 			self.redirect('/')
@@ -284,11 +274,12 @@ class CreatePost(Handler):
 
 class PostPermalink(Handler):
 	def get(self, post_id):
-		post = Post.get_by_id(int(post_id))
-		self.render('permalink.html', post = post)
+		self.render('permalink.html', post = Post.by_id(post_id))
 
 	def post(self, post_id):
-		self.write(self.request)
+		if self.login_check():
+			self.login_handler('permalink.html', post = Post.by_id(post_id))
+
 
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
