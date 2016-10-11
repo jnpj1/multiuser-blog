@@ -17,4 +17,16 @@
 			<a href="/edit/{{post.key().id()}}">Edit/Delete Post</a>
 		</div>
 	{% endif %}
+	<div id="comments-section">
+		<h4>Comments</h4>
+		<p>{{number_comments}} comments</p>
+		<button>Add Comment</button>
+		<form class="comment-form" method="post">
+			<input type="text" name="content">
+			<input type="submit" name="comment">
+		</form>
+		{% for comment in comments %}
+			{{comment.render(user.username, post.key().id()) | safe}}
+		{% endfor %}
+	</div>
 {% endblock %}

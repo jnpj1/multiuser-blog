@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Vacation Blog</title>
+		<script src="/static/app.js"></script>
+		{% if delete_post %}
+			<meta http-equiv="refresh" content="5;url=/">
+		{% endif %}
+	</head>
+	<body>
+		<header>
+			<div class="blog-title">
+				<p>Vacation Stories</p>
+			</div>
+		</header>
+		{% block content %}
+		{% endblock %}
+	</body>
+</html>

@@ -1,51 +1,41 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Vacation Blog</title>
-		<script src="/static/app.js"></script>
-	</head>
-	<body>
-		<header>
-			<div class="blog-title">
-				<p>Vacation Stories</p>
-			</div>
-		</header>
-		<main>
-			<h1>Register</h1>
-			<form method="post">
-				<label>Username
-					<input type="text" name="username" value="{{username}}">
-					{% if username_error %}
-						{{username_error}}
-					{% endif %}
-					{% if existing_error %}
-						{{existing_error}}
-					{% endif %}
-				</label>
-				<br>
-				<label>Password
-					<input type="password" name="password">
-					{% if password_error %}
-						{{password_error}}
-					{% endif %}
-				</label>
-				<br>
-				<label>Verify Password
-					<input type="password" name="verify">
-					{% if verify_error %}
-						{{verify_error}}
-					{% endif %}
-				</label>
-				<br>
-				<label>Email (optional)
-					<input type="text" name="email" value="{{email}}">
-					{% if email_error %}
-						{{email_error}}
-					{% endif %}
-				</label>
-				<br>
-				<button>Submit</button>
-			</form>
-		</main>
-	</body>
-</html>
+{% extends "base2.html" %}
+
+{% block content %}
+<main>
+	<h1>Register</h1>
+	<form method="post">
+		<label>Username
+			<input type="text" name="username" value="{{username}}">
+			{% if username_error %}
+				{{username_error}}
+			{% endif %}
+			{% if existing_error %}
+				{{existing_error}}
+			{% endif %}
+		</label>
+		<br>
+		<label>Password
+			<input type="password" name="password">
+			{% if password_error %}
+				{{password_error}}
+			{% endif %}
+		</label>
+		<br>
+		<label>Verify Password
+			<input type="password" name="verify">
+			{% if verify_error %}
+				{{verify_error}}
+			{% endif %}
+		</label>
+		<br>
+		<label>Email (optional)
+			<input type="text" name="email" value="{{email}}">
+			{% if email_error %}
+				{{email_error}}
+			{% endif %}
+		</label>
+		<br>
+		<button>Submit</button>
+	</form>
+</main>
+{% endblock %}

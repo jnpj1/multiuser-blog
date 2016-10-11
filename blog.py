@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import random
 import datetime
+import time
 from string import letters
 from google.appengine.ext import db
 
@@ -75,6 +76,7 @@ class Post(db.Model):
 	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 	modified = db.DateTimeProperty(auto_now = True)
+	comments = db.IntegerProperty(required = True)
 	likes = db.IntegerProperty(required = True)
 
 	@classmethod
@@ -94,10 +96,19 @@ class Comment(db.Model):
 	author = db.StringProperty(required = True)
 	content = db.StringProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
-	modified = db.DateTimeProperty(auto_now = True)
 
-	def render(self):
-		return render_str('comment.html', comment = self)
+	@classmethod
+	def by_id(cls, comment_id, parent):
+		return Comment.get_by_id(int(comment_id), parent = parent)
+
+	@classmethod
+	def all_comments(cls, parent_post):
+		comments = Comment.all().order('-created')
+		return comments.ancestor(parent_post)
+
+	def render(self, username, post_id):
+		return render_str('comment.html', comment = self,
+			username = username, post_id = post_id)
 
 class Like(db.Model):
 	uid = db.StringProperty(required = True)
@@ -268,7 +279,7 @@ class CreatePost(Handler):
 				content = content)
 		else:
 			post = Post(author = self.user.username, subject = subject,
-				content = content, likes = 0)
+				content = content, likes = 0, comments = 0)
 			post.put()
 			self.redirect('/post/%s?new_post=true' % post.key().id())
 
@@ -276,12 +287,25 @@ class PostPermalink(Handler):
 	def get(self, post_id):
 		new_post = self.request.get('new_post')
 		edited_post = self.request.get('edited_post')
+		post = Post.by_id(post_id)
+		comments = Comment.all_comments(post)
+
 		self.render('permalink.html', post = Post.by_id(post_id),
-			new_post = new_post, edited_post = edited_post)
+			new_post = new_post, edited_post = edited_post,
+			comments = comments, number_comments = post.comments)
 
 	def post(self, post_id):
 		if self.login_check():
 			self.login_handler('permalink.html', post = Post.by_id(post_id))
+		else:
+			content = self.request.get('content')
+			post = Post.by_id(post_id)
+			comment = Comment(author = self.user.username, content = content,
+				parent = post)
+			comment.put()
+			post.comments += 1
+			post.put()
+			self.redirect('/post/%s#comments-section' % post_id)
 
 class EditPost(Handler):
 	def get(self, post_id):
@@ -289,7 +313,8 @@ class EditPost(Handler):
 		if self.user:
 			if post.author == self.user.username:
 				self.render('newpost.html', edit_post = True, author = post.author,
-					subject = post.subject, content = post.content, created = post.created)
+					subject = post.subject, content = post.content, created = post.created,
+					post_id = post_id)
 			else:
 				self.redirect('/')
 		else:
@@ -308,13 +333,37 @@ class EditPost(Handler):
 		post.put()
 		self.redirect('/post/%s?edited_post=true' % post.key().id())
 
+class DeletePost(Handler):
+	def get(self, post_id):
+		post = Post.by_id(post_id)
+		subject = post.subject
+		if self.user:
+			if post.author == self.user.username:
+				self.render('delete.html', subject = subject,
+					delete_post = True)
+				post.delete()
+			else:
+				self.redirect('/')
+		else:
+			self.redirect('/')
 
+class DeleteComment(Handler):
+	def get(self, post_id):
+		post = Post.by_id(post_id)
+		comment_id = self.request.get('comment')
+		comment = Comment.by_id(comment_id, post)
+		comment.delete()
+		post.comments -= 1
+		post.put()
+		self.redirect('/post/%s#comments-section' % post_id)
 
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
 								('/logout', Logout),
 								('/newpost', CreatePost),
 								('/post/(\d+)', PostPermalink),
-								('/edit/(\d+)', EditPost)
+								('/edit/(\d+)', EditPost),
+								('/delete/(\d+)', DeletePost),
+								('/delete_comment/(\d+)', DeleteComment)
 								],
 								debug = True)

@@ -21,7 +21,16 @@
 	</label>
 	{{content_error}}
 	<br>
-	<input type="submit">
+	{% if new_post %}
+		<input type="submit">
+		<input type="reset" value="Clear">
+	{% elif edit_post %}
+		<input type="submit" value="Submit Changes">
+		<input type="reset" value="Clear Changes">
+	{% endif %}
 </form>
+{% if edit_post %}
+	<button type="button" onclick="location.href='/delete/{{post_id}}'">Delete Post</button>
+{% endif %}
 
 {% endblock %}
