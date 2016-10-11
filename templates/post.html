@@ -13,13 +13,13 @@
 	<div class="post-content">
 		<p>{{post.render_text | safe}}</p>
 	</div>
-	<div class="post-footer">
+	<div class="post-footer" data-postid="{{post.key().id()}}">
 		{% if not post.modified == post.created %}
 			<p>Modified on: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
 		{% endif %}
-		<p>Likes: {{post.likes}}</p>
+		<p class="like-counter">Likes: {{post.likes}}</p>
 		<i class="fa fa-thumbs-up fa-lg"></i>
 		<i class="fa fa-thumbs-down fa-lg"></i>
-		<p>{{like_error}}</p>
+		<p class="like-error"></p>
 	</div>
 </article>

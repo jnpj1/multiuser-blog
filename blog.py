@@ -7,6 +7,7 @@ import hmac
 import random
 import datetime
 import time
+import json
 from string import letters
 from google.appengine.ext import db
 
@@ -111,8 +112,13 @@ class Comment(db.Model):
 			username = username, post_id = post_id)
 
 class Like(db.Model):
-	uid = db.StringProperty(required = True)
+	user_id = db.IntegerProperty(required = True)
 	value = db.IntegerProperty(required = True)
+
+	@classmethod
+	def check_previous_likes(self, user_id, parent_post):
+		likes = Like.all().filter('user_id =', user_id)
+		return likes.ancestor(parent_post).get()
 
 class Handler(webapp2.RequestHandler):
 	def initialize(self, *a, **kw):
@@ -179,6 +185,10 @@ class Handler(webapp2.RequestHandler):
 			else:
 				new_params['signin_error'] = True
 				self.render(template, **new_params)
+
+	def comment_check(self):
+		if self.request.get('comment-form'):
+			return True
 
 class MainPage(Handler):
 	def get(self):
@@ -297,7 +307,7 @@ class PostPermalink(Handler):
 	def post(self, post_id):
 		if self.login_check():
 			self.login_handler('permalink.html', post = Post.by_id(post_id))
-		else:
+		elif self.comment_check():
 			content = self.request.get('content')
 			post = Post.by_id(post_id)
 			comment = Comment(author = self.user.username, content = content,
@@ -357,6 +367,28 @@ class DeleteComment(Handler):
 		post.put()
 		self.redirect('/post/%s#comments-section' % post_id)
 
+class LikeHandler(Handler):
+	def post(self):
+		post_id = int(self.request.get('postId'))
+		vote_value = int(self.request.get('voteValue'))
+		post = Post.by_id(post_id)
+		user_id = int(self.user.key().id())
+		new_like_value = post.likes + vote_value
+
+		if self.user:
+			if self.user.username == post.author:
+				self.write(json.dumps({'error': "You can't like your own posts.", 'post_id': post_id}))
+			elif Like.check_previous_likes(user_id, post):
+				self.write(json.dumps({'error': "You can't like a post multiple times.", 'post_id': post_id}))
+			else:
+				new_like = Like(user_id = user_id, value = vote_value, parent = post)
+				new_like.put()
+				post.likes = new_like_value
+				post.put()
+				self.write(json.dumps({'likes': new_like_value, 'post_id': post_id}))
+		else:
+			self.write(json.dumps({'error': "You must be logged in to like a post.", 'post_id': post_id}))
+
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
 								('/logout', Logout),
@@ -364,6 +396,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
 								('/post/(\d+)', PostPermalink),
 								('/edit/(\d+)', EditPost),
 								('/delete/(\d+)', DeletePost),
-								('/delete_comment/(\d+)', DeleteComment)
+								('/delete_comment/(\d+)', DeleteComment),
+								('/like', LikeHandler)
 								],
 								debug = True)

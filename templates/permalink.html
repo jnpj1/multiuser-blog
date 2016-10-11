@@ -23,7 +23,7 @@
 		<button>Add Comment</button>
 		<form class="comment-form" method="post">
 			<input type="text" name="content">
-			<input type="submit" name="comment">
+			<input type="submit" name="comment-form">
 		</form>
 		{% for comment in comments %}
 			{{comment.render(user.username, post.key().id()) | safe}}
