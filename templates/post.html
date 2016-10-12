@@ -18,8 +18,10 @@
 			<p>Modified on: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
 		{% endif %}
 		<p class="like-counter">Likes: {{post.likes}}</p>
-		<i class="fa fa-thumbs-up fa-lg"></i>
-		<i class="fa fa-thumbs-down fa-lg"></i>
-		<p class="like-error"></p>
+		<div class="like-icons">
+			<i class="fa fa-thumbs-up fa-lg"></i>
+			<i class="fa fa-thumbs-down fa-lg"></i>
+			<p class="like-error"></p>
+		</div>
 	</div>
 </article>

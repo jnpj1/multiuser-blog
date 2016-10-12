@@ -3,7 +3,7 @@ $(document).ready(function() {
 	// Process clicking of like/dislike icons
 	$('.fa').click(function(event) {
 		$target = $(event.currentTarget);
-		postId = $target.parent('.post-footer').data('postid')
+		postId = $target.parents('.post-footer').data('postid')
 
 		// Assign value of vote based on icon clicked
 		var voteValue = 0;

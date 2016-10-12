@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="permalink-box">
 	{% if new_post %}
 		<div class="new-post-success">
 			<p>Post created successfully!</p>
@@ -29,4 +30,5 @@
 			{{comment.render(user.username, post.key().id()) | safe}}
 		{% endfor %}
 	</div>
+</div>
 {% endblock %}

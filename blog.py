@@ -76,7 +76,7 @@ class Post(db.Model):
 	subject = db.StringProperty(required = True)
 	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
-	modified = db.DateTimeProperty(auto_now = True)
+	modified = db.DateTimeProperty(auto_now_add = True)
 	comments = db.IntegerProperty(required = True)
 	likes = db.IntegerProperty(required = True)
 
@@ -286,7 +286,7 @@ class CreatePost(Handler):
 		if subject_error or content_error:
 			self.render('newpost.html', subject_error = subject_error,
 				content_error = content_error, subject = subject,
-				content = content)
+				content = content, new_post = True)
 		else:
 			post = Post(author = self.user.username, subject = subject,
 				content = content, likes = 0, comments = 0)
@@ -324,7 +324,7 @@ class EditPost(Handler):
 			if post.author == self.user.username:
 				self.render('newpost.html', edit_post = True, author = post.author,
 					subject = post.subject, content = post.content, created = post.created,
-					post_id = post_id)
+					post_id = post_id, modified = datetime.datetime.now())
 			else:
 				self.redirect('/')
 		else:

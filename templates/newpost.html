@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
 {% block form %}
-
+<div class="new-post-box box-shadow">
 {% if new_post %}
-	<h2>Create New Post</h2>
+	<h2 class="new-post-header">Create New Post</h2>
 {% elif edit_post %}
-	<h2>Edit Post</h2>
-	<p>{{subject}}</p>
+	<h2 class="new-post-header">Edit Post</h2>
+	<h3>{{subject}}</h3>
 	<p>Originally created: {{created.strftime("%b %d")}} at {{created.strftime("%I:%M")}}</p>
 {% endif %}
 
 <form class="new-post-form" method="post">
 	<label class="post-subject">Subject
-		<input type="text" name="subject" value="{{subject}}">
+		<input class="subject-input" type="text" name="subject" value="{{subject}}">
 	</label>
 	{{subject_error}}
 	<br>
@@ -22,15 +22,20 @@
 	{{content_error}}
 	<br>
 	{% if new_post %}
-		<input type="submit">
-		<input type="reset" value="Clear">
+		<input class="input-button" type="submit" value="Submit Post">
+		<input class="input-button" type="reset" value="Clear Form">
 	{% elif edit_post %}
-		<input type="submit" value="Submit Changes">
-		<input type="reset" value="Clear Changes">
+		<input class="input-button" type="submit" value="Submit Changes">
+		<input class="input-button" type="reset" value="Reset Changes">
 	{% endif %}
 </form>
-{% if edit_post %}
-	<button type="button" onclick="location.href='/delete/{{post_id}}'">Delete Post</button>
-{% endif %}
-
+	<div class="cancel-button-box">
+	{% if new_post %}
+		<button class="cancel-button" type="button" onclick="location.href='/'">Cancel and Return</button>
+	{% elif edit_post %}
+		<button class="cancel-button" type="button" onclick="location.href='/post/{{post_id}}'">Cancel and Return</button>
+		<button class="cancel-button" type="button" onclick="location.href='/delete/{{post_id}}'">Delete Post</button>
+	{% endif %}
+	</div>
+</div>
 {% endblock %}
