@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	$('.new-post-success').fadeOut(3000);
 
 	// Process clicking of like/dislike icons
 	$('.fa').click(function(event) {
@@ -28,11 +29,12 @@ $(document).ready(function() {
 			url: '/like'
 		}).done(function(data) {
 			var dataSelectorString = '[data-postid="' + data['post_id'] + '"]';
-			console.log(data);
 			if (data['error']) {
-				console.log(data.error);
-				console.log($(dataSelectorString).find('.like-error'));
-				$(dataSelectorString).find('.like-error').html(data.error);
+				console.log(this);
+				$(dataSelectorString).find('.like-error').fadeIn(500).html(data.error);
+				setTimeout(function() {
+					$(dataSelectorString).find('.like-error').fadeOut(1000);
+				}, 2000);
 			} else {
 				$(dataSelectorString).find('.like-counter').html('Likes: ' + data.likes);
 			}

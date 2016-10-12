@@ -323,8 +323,8 @@ class EditPost(Handler):
 		if self.user:
 			if post.author == self.user.username:
 				self.render('newpost.html', edit_post = True, author = post.author,
-					subject = post.subject, content = post.content, created = post.created,
-					post_id = post_id, modified = datetime.datetime.now())
+					original_subject = post.subject, content = post.content,
+					created = post.created, post_id = post_id, subject = post.subject)
 			else:
 				self.redirect('/')
 		else:
@@ -335,13 +335,28 @@ class EditPost(Handler):
 		content = self.request.get('content')
 		post = Post.by_id(post_id)
 
-		if subject:
-			post.subject = subject
-		if content:
-			post.content = content
+		subject_error = ''
+		content_error = ''
 
-		post.put()
-		self.redirect('/post/%s?edited_post=true' % post.key().id())
+		if not subject:
+			subject_error = 'Please enter a subject.'
+		if not content:
+			content_error = 'Please enter content for the post.'
+		if subject_error or content_error:
+			self.render('newpost.html', subject_error = subject_error,
+				content_error = content_error, subject = subject,
+				content = content, edit_post = True, author = post.author,
+				created = post.created, post_id = post_id,
+				original_subject = post.subject)
+		else:
+			if subject:
+				post.subject = subject
+			if content:
+				post.content = content
+
+			post.modified = datetime.datetime.now()
+			post.put()
+			self.redirect('/post/%s?edited_post=true' % post.key().id())
 
 class DeletePost(Handler):
 	def get(self, post_id):

@@ -3,17 +3,18 @@
 	<head>
 		<title>Trek</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script src="/static/js/jquery.min.js"></script>
 		<script src="/static/js/app.js"></script>
 		<link rel="stylesheet" href="/static/css/main.css"/>
 		<link href="https://fonts.googleapis.com/css?family=Cabin|El+Messiri:700" rel="stylesheet">
 		{% if delete_post %}
-			<meta http-equiv="refresh" content="5;url=/">
+			<meta http-equiv="refresh" content="3;url=/">
 		{% endif %}
 	</head>
 	<body>
 		<header>
 			<div class="blog-title-box">
-				<p class="blog-title">Trek</p>
+				<p class="blog-title accent-font">Trek</p>
 			</div>
 		</header>
 		{% block content %}

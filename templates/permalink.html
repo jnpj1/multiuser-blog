@@ -2,17 +2,16 @@
 
 {% block content %}
 <div class="permalink-box">
+	{{post.render() | safe}}
 	{% if new_post %}
 		<div class="new-post-success">
-			<p>Post created successfully!</p>
+			<p class="success-message">Post created successfully!</p>
 		</div>
 	{% elif edited_post %}
 		<div class="new-post-success">
-			<p>Post edited successfully!</p>
+			<p class="success-message">Post edited successfully!</p>
 		</div>
-
 	{% endif %}
-	{{post.render() | safe}}
 	{% if post.author == user.username %}
 		<div class="edit-delete-box">
 			<a href="/edit/{{post.key().id()}}">Edit/Delete Post</a>

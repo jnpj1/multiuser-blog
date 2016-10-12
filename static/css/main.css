@@ -161,15 +161,63 @@ textarea {
 }
 
 .post-content {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
+}
+
+.post-footer {
+	border-top: 1px solid #6E9075;
+	padding: 5px 0;
+}
+
+.like-box {
+	display: flex;
+	justify-content: space-between;
+}
+
+.fa {
+	color: #380823;
+}
+
+.new-post-success {
+	position: fixed;
+	top: 90px;
+	width: 100%;
+}
+
+.success-message {
+	text-align: center;
+}
+
+.edit-delete-box {
+	width: 80%;
+	text-align: left;
+	margin-top: -25px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 20px;
+}
+
+.deleted-post {
+	text-align: center;
+}
+
+.deleted-post-header {
+	padding-top: 20px;
+	color: #380823;
+}
+
+.deleted-text {
+	font-size: 18px;
+	padding-top: 10px;
+}
+
+.permalink-box,
+.deleted-post {
+	margin-top: 75px;
 }
 
 .post:nth-child(odd) {
 	background-color: #E7ECEF;
-}
-
-.permalink-box {
-	margin-top: 75px;
 }
 
 .fa:hover, {

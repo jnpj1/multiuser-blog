@@ -15,13 +15,15 @@
 	</div>
 	<div class="post-footer" data-postid="{{post.key().id()}}">
 		{% if not post.modified == post.created %}
-			<p>Modified on: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
+			<p>Last modified on: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
 		{% endif %}
-		<p class="like-counter">Likes: {{post.likes}}</p>
-		<div class="like-icons">
-			<i class="fa fa-thumbs-up fa-lg"></i>
-			<i class="fa fa-thumbs-down fa-lg"></i>
+		<div class="like-box">
+			<p class="like-counter">Likes: {{post.likes}}</p>
 			<p class="like-error"></p>
+			<div class="like-icons">
+				<i class="fa fa-thumbs-up fa-lg"></i>
+				<i class="fa fa-thumbs-down fa-lg"></i>
+			</div>
 		</div>
 	</div>
 </article>
