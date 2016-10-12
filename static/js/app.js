@@ -47,4 +47,8 @@ $(document).ready(function() {
 		$('.login-form').slideDown('fast');
 		$('.login-error').hide('fast');
 	});
+
+	$('.comment-button').click(function() {
+		$('.comments-form-box').slideToggle('fast');
+	});
 });

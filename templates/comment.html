@@ -1,12 +1,12 @@
 <div class="comment">
 	<div class="comment-details">
-		<p class="comment-author">Comment by {{comment.author}}</p>
+		<h3 class="comment-author">{{comment.author}}</h3>
 		<p class="comment-time">{{comment.created.strftime("%b %d")}} at {{comment.created.strftime("%I:%M")}}</p>
+		{% if comment.author == username %}
+			<a class="comment-delete" href="/delete_comment/{{post_id}}?comment={{comment.key().id()}}">Delete</a>
+		{% endif %}
 	</div>
 	<div class="comment-text-box">
 		<p class="comment-text">{{comment.content}}</p>
 	</div>
-	{% if comment.author == username %}
-		<button type="button" onclick="location.href='/delete_comment/{{post_id}}?comment={{comment.key().id()}}'">Delete</button>
-	{% endif %}
 </div>
