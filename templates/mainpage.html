@@ -3,8 +3,9 @@
 {% block content %}
 
 <main>
-	<div>
-		<button type="button" onclick="location.href='/newpost'">Add yours!</button>
+	<div class="welcome-banner">
+		<h2 class="accent-font welcome-message">Share your adventures!</h2>
+		<button class="accent-font create-button" type="button" onclick="location.href='/newpost'">Add yours</button>
 	</div>
 	{% for post in posts %}
 		{{post.render() | safe}}

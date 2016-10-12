@@ -40,4 +40,9 @@ $(document).ready(function() {
 			alert('Failed to log like.  Please try again.')
 		});
 	});
+
+	$('.login').click(function() {
+		$('.login-form').slideDown('fast');
+		$('.login-error').hide('fast');
+	});
 });
