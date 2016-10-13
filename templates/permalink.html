@@ -28,6 +28,12 @@
 				<input class="comment-submit" type="submit" name="comment-form">
 			</form>
 		</div>
+		<div class="comments-error-box">
+			{% if comment_error %}
+				<p>You must <span class="login-alternative">login</span> or
+				<a href="/register">register</a> to post a comment.</p>
+			{% endif %}
+		</div>
 		{% for comment in comments %}
 			{{comment.render(user.username, post.key().id()) | safe}}
 		{% endfor %}

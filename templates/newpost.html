@@ -10,34 +10,34 @@
 	<p>Originally created: {{created.strftime("%b %d")}} at {{created.strftime("%I:%M")}}</p>
 {% endif %}
 
-<form class="new-post-form" method="post">
-	<label class="post-subject">Subject
-		<input class="subject-input" type="text" name="subject" value="{{subject}}">
-	</label>
-	<br>
-	<label class="post-content">Content
-		<textarea name="content">{{content}}</textarea>
-	</label>
-	<br>
-	<div class="post-form-error">
-		<p>{{subject_error}}</p>
-		<p>{{content_error}}</p>
-	</div>
-	{% if new_post %}
-		<input class="input-button" type="submit" value="Submit Post">
-		<input class="input-button" type="reset" value="Clear Form">
-	{% elif edit_post %}
-		<input class="input-button" type="submit" value="Submit Changes">
-		<input class="input-button" type="reset" value="Reset Changes">
-	{% endif %}
-</form>
-	<div class="cancel-button-box">
-	{% if new_post %}
-		<button class="cancel-button" type="button" onclick="location.href='/'">Cancel and Return</button>
-	{% elif edit_post %}
-		<button class="cancel-button" type="button" onclick="location.href='/post/{{post_id}}'">Cancel and Return</button>
-		<button class="cancel-button" type="button" onclick="location.href='/delete/{{post_id}}'">Delete Post</button>
-	{% endif %}
-	</div>
+	<form class="new-post-form" method="post">
+		<label class="post-subject">Subject
+			<input class="subject-input" type="text" name="subject" value="{{subject}}">
+		</label>
+		<br>
+		<label class="post-content">Content
+			<textarea name="content">{{content}}</textarea>
+		</label>
+		<br>
+		<div class="post-form-error">
+			<p>{{subject_error}}</p>
+			<p>{{content_error}}</p>
+		</div>
+		{% if new_post %}
+			<input class="input-button" type="submit" value="Submit Post">
+			<input class="input-button" type="reset" value="Clear Form">
+		{% elif edit_post %}
+			<input class="input-button" type="submit" value="Submit Changes">
+			<input class="input-button" type="reset" value="Reset Changes">
+		{% endif %}
+	</form>
+		<div class="cancel-button-box">
+		{% if new_post %}
+			<button class="cancel-button" type="button" onclick="location.href='/'">Cancel and Return</button>
+		{% elif edit_post %}
+			<button class="cancel-button" type="button" onclick="location.href='/post/{{post_id}}'">Cancel and Return</button>
+			<button class="cancel-button" type="button" onclick="location.href='/delete/{{post_id}}'">Delete Post</button>
+		{% endif %}
+		</div>
 </div>
 {% endblock %}

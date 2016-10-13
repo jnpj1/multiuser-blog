@@ -51,4 +51,8 @@ $(document).ready(function() {
 	$('.comment-button').click(function() {
 		$('.comments-form-box').slideToggle('fast');
 	});
+
+	$('.login-alternative').click(function() {
+		$('.login').click();
+	});
 });

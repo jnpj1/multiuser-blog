@@ -1,41 +1,36 @@
-{% extends "base2.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-<main>
-	<h1>Register</h1>
-	<form method="post">
+<main class="registration-form-box box-shadow">
+	<h1 class="registration-header">Register</h1>
+	<form class="registration-form" method="post">
 		<label>Username
-			<input type="text" name="username" value="{{username}}">
-			{% if username_error %}
-				{{username_error}}
-			{% endif %}
-			{% if existing_error %}
-				{{existing_error}}
-			{% endif %}
+			<input class="registration-input" type="text" name="username" value="{{reg_username}}">
 		</label>
 		<br>
 		<label>Password
-			<input type="password" name="password">
-			{% if password_error %}
-				{{password_error}}
-			{% endif %}
+			<input class="registration-input" type="password" name="password">
 		</label>
 		<br>
 		<label>Verify Password
-			<input type="password" name="verify">
-			{% if verify_error %}
-				{{verify_error}}
-			{% endif %}
+			<input class="registration-input" type="password" name="verify">
 		</label>
 		<br>
 		<label>Email (optional)
-			<input type="text" name="email" value="{{email}}">
-			{% if email_error %}
-				{{email_error}}
-			{% endif %}
+			<input class="registration-input" type="text" name="email" value="{{email}}">
 		</label>
 		<br>
-		<button>Submit</button>
+		<div class="registration-form-error">
+			<p>{{reg_username_error}}</p>
+			<p>{{existing_error}}</p>
+			<p>{{reg_password_error}}</p>
+			<p>{{verify_error}}</p>
+			<p>{{email_error}}</p>
+		</div>
+		<input class="registration-form-button" type="submit" name="registration-form">
 	</form>
+	<div class="login-alternative-box">
+		<p class="login-prompt"> Already have an account? <span class="login-alternative">Login.</span></p>
+	</div>
 </main>
 {% endblock %}

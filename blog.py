@@ -120,6 +120,10 @@ class Like(db.Model):
 		likes = Like.all().filter('user_id =', user_id)
 		return likes.ancestor(parent_post).get()
 
+	@classmethod
+	def all_likes(cls, parent_post):
+		return Like.all().ancestor(parent_post)
+
 class Handler(webapp2.RequestHandler):
 	def initialize(self, *a, **kw):
 		webapp2.RequestHandler.initialize(self, *a, **kw)
@@ -186,10 +190,6 @@ class Handler(webapp2.RequestHandler):
 				new_params['signin_error'] = True
 				self.render(template, **new_params)
 
-	def comment_check(self):
-		if self.request.get('comment-form'):
-			return True
-
 class MainPage(Handler):
 	def get(self):
 		self.render('mainpage.html', posts = Post.most_recent())
@@ -205,60 +205,63 @@ class RegistrationPage(Handler):
 			self.render('registration.html')
 
 	def post(self):
-		username = self.request.get('username')
-		password = self.request.get('password')
-		verify = self.request.get('verify')
-		email = self.request.get('email')
-		error_check = False
+		if self.login_check():
+			self.login_handler('registration.html')
+		elif self.request.get('registration-form'):
+			username = self.request.get('username')
+			password = self.request.get('password')
+			verify = self.request.get('verify')
+			email = self.request.get('email')
+			error_check = False
 
-		params = dict(username = username, email = email)
+			params = dict(reg_username = username, email = email)
 
-		USER_RE = re.compile(r'^[a-zA-Z0-9_-]{3,20}$')
-		def valid_username(username):
-			return USER_RE.match(username)
+			USER_RE = re.compile(r'^[a-zA-Z0-9_-]{3,20}$')
+			def valid_username(username):
+				return USER_RE.match(username)
 
-		PASSWORD_RE = re.compile(r'^.{3,20}$')
-		def valid_password(password):
-			return PASSWORD_RE.match(password)
+			PASSWORD_RE = re.compile(r'^.{3,20}$')
+			def valid_password(password):
+				return PASSWORD_RE.match(password)
 
-		EMAIL_RE = re.compile(r'^[\S]+@[\S]+.[\S]+$')
-		def valid_email(email):
-			return EMAIL_RE.match(email)
+			EMAIL_RE = re.compile(r'^[\S]+@[\S]+.[\S]+$')
+			def valid_email(email):
+				return EMAIL_RE.match(email)
 
-		def verify_password(password, verify):
-			return password == verify
+			def verify_password(password, verify):
+				return password == verify
 
-		if not valid_username(username):
-			params['username_error'] = "That's not a valid username."
-			error_check = True
+			if not valid_username(username):
+				params['reg_username_error'] = "That's not a valid username."
+				error_check = True
 
-		if not valid_password(password):
-			params['password_error'] = "That's not a valid password."
-			error_check = True
-		elif not verify_password(password, verify):
-			params['verify_error'] = "Your passwords didn't match."
-			error_check = True
+			if not valid_password(password):
+				params['reg_password_error'] = "That's not a valid password."
+				error_check = True
+			elif not verify_password(password, verify):
+				params['verify_error'] = "Your passwords didn't match."
+				error_check = True
 
-		if email and not valid_email(email):
-			params['email_error'] = "That's not a valid email."
-			error_check = True
+			if email and not valid_email(email):
+				params['email_error'] = "That's not a valid email."
+				error_check = True
 
-		if error_check:
-			self.render('registration.html', **params)
-		else:
-			# Check to see if user already exists.
-			# If not, register user.
-			user = User.by_username(username)
-			if user:
-				existing_error = "That username already exists."
-				self.render('registration.html', username = username,
-					existing_error = existing_error)
+			if error_check:
+				self.render('registration.html', **params)
 			else:
-				user = User.register_user(username, password, email)
-				user.put()
-				self.login_cookie(user)
-				self.render('registration.html')
-				self.redirect('/')
+				# Check to see if user already exists.
+				# If not, register user.
+				user = User.by_username(username)
+				if user:
+					existing_error = "That username already exists."
+					self.render('registration.html', username = username,
+						existing_error = existing_error)
+				else:
+					user = User.register_user(username, password, email)
+					user.put()
+					self.login_cookie(user)
+					self.render('registration.html')
+					self.redirect('/')
 
 class Logout(Handler):
 	def get(self):
@@ -300,22 +303,28 @@ class PostPermalink(Handler):
 		post = Post.by_id(post_id)
 		comments = Comment.all_comments(post)
 
-		self.render('permalink.html', post = Post.by_id(post_id),
+		self.render('permalink.html', post = post,
 			new_post = new_post, edited_post = edited_post,
 			comments = comments, number_comments = post.comments)
 
 	def post(self, post_id):
 		if self.login_check():
 			self.login_handler('permalink.html', post = Post.by_id(post_id))
-		elif self.comment_check():
-			content = self.request.get('content')
-			post = Post.by_id(post_id)
-			comment = Comment(author = self.user.username, content = content,
-				parent = post)
-			comment.put()
-			post.comments += 1
-			post.put()
-			self.redirect('/post/%s#comments-section' % post_id)
+		elif self.request.get('comment-form'):
+			if self.user:
+				content = self.request.get('content')
+				post = Post.by_id(post_id)
+				comment = Comment(author = self.user.username, content = content,
+					parent = post)
+				comment.put()
+				post.comments += 1
+				post.put()
+				self.redirect('/post/%s#comments-section' % post_id)
+			else:
+				post = Post.by_id(post_id)
+				comments = Comment.all_comments(post)
+				self.render('permalink.html', post = post, comments = comments,
+					number_comments = post.comments, comment_error = True)
 
 class EditPost(Handler):
 	def get(self, post_id):
@@ -364,6 +373,12 @@ class DeletePost(Handler):
 		subject = post.subject
 		if self.user:
 			if post.author == self.user.username:
+				comments = Comment.all_comments(post)
+				for comment in comments:
+					comment.delete()
+				likes = Like.all_likes(post)
+				for like in likes:
+					like.delete()
 				self.render('delete.html', subject = subject,
 					delete_post = True)
 				post.delete()

@@ -118,7 +118,8 @@ textarea {
 	justify-content: space-between;
 }
 
-.new-post-box {
+.new-post-box,
+.registration-form-box {
 	margin-top: 105px;
 	width: 500px;
 	margin-left: auto;
@@ -126,11 +127,24 @@ textarea {
 	text-align: center;
 }
 
-.new-post-header {
+.new-post-header,
+.registration-header {
 	font-size: 36px;
 	background-color: #E7ECEF;
 	font-weight: 100;
 	color: #380823;
+}
+
+.registration-header {
+	padding-bottom: 5px;
+}
+
+.registration-input {
+	margin: 10px;
+}
+
+.login-alternative {
+	text-decoration: underline;
 }
 
 .new-post-form {
@@ -145,14 +159,27 @@ textarea {
 
 .cancel-button-box {
 	width: 180px;
+}
+
+.login-alternative-box {
+	width: 250px;
+}
+
+.cancel-button-box,
+.login-alternative-box {
 	border-top: 1px solid #6E9075;
 	margin: auto;
+}
+
+.login-prompt {
+	padding: 5px;
 }
 
 .input-button,
 .cancel-button,
 .comment-button,
-.comment-submit {
+.comment-submit,
+.registration-form-button {
 	background-color: #6E9075;
 	color: #FDFDFF;
 	border: none;
@@ -192,10 +219,6 @@ textarea {
 	position: fixed;
 	top: 90px;
 	width: 100%;
-}
-
-.success-message {
-	text-align: center;
 }
 
 .edit-delete-box {
@@ -252,7 +275,9 @@ textarea {
 	padding-left: 15px;
 }
 
-.deleted-post {
+.deleted-post,
+.success-message,
+.comments-error-box {
 	text-align: center;
 }
 
@@ -283,11 +308,17 @@ textarea {
 .cancel-button:hover,
 .input-button:hover,
 .comment-button:hover,
-.comment-submit:hover {
+.comment-submit:hover,
+.registration-form-button:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }
 
-.login-submit:hover {
+.login-submit:hover,
+.login-alternative:hover {
 	cursor: pointer;
+}
+
+.comment-button:focus {
+	outline: 0;
 }
