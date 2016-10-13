@@ -311,18 +311,24 @@ class PostPermalink(Handler):
 		if self.login_check():
 			self.login_handler('permalink.html', post = Post.by_id(post_id))
 		elif self.request.get('comment-form'):
+			post = Post.by_id(post_id)
+			comments = Comment.all_comments(post)
 			if self.user:
 				content = self.request.get('content')
-				post = Post.by_id(post_id)
-				comment = Comment(author = self.user.username, content = content,
-					parent = post)
-				comment.put()
-				post.comments += 1
-				post.put()
-				self.redirect('/post/%s#comments-section' % post_id)
+
+				if not content:
+					self.render('permalink.html', post = post,
+						comments = comments, number_comments = post.comments,
+						content_error = True)
+				else:
+					post = Post.by_id(post_id)
+					comment = Comment(author = self.user.username, content = content,
+						parent = post)
+					comment.put()
+					post.comments += 1
+					post.put()
+					self.redirect('/post/%s#comments-section' % post_id)
 			else:
-				post = Post.by_id(post_id)
-				comments = Comment.all_comments(post)
 				self.render('permalink.html', post = post, comments = comments,
 					number_comments = post.comments, comment_error = True)
 

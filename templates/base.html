@@ -18,11 +18,11 @@
 				{% if user %}
 					<div class="username-box">
 						<p><a href="/logout">Logout</a>
-						<p>Welcome, {{user.username}}</p>
+						<p class="welcome-username">Welcome, {{user.username}}</p>
 					</div>
 				{% else %}
 					<div class="login-prompt-box">
-						<p><a href="/register">Register</a> or <span class="login">Login</span></p>
+						<p class="signin-prompt"><a href="/register">Register</a> or <span class="login">Login</span></p>
 						<form class="login-form" method="post">
 							<input type="text" name="username" placeholder="Username" value="{{username}}">
 							<input type="password" name="password" placeholder="Password">

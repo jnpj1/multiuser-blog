@@ -33,6 +33,9 @@
 				<p>You must <span class="login-alternative">login</span> or
 				<a href="/register">register</a> to post a comment.</p>
 			{% endif %}
+			{% if content_error %}
+				<p>Comment must have content.</p>
+			{% endif %}
 		</div>
 		{% for comment in comments %}
 			{{comment.render(user.username, post.key().id()) | safe}}

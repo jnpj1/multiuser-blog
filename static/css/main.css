@@ -204,6 +204,7 @@ textarea {
 .post-footer {
 	border-top: 1px solid #6E9075;
 	padding: 5px 0;
+	position: relative;
 }
 
 .like-box {
@@ -213,6 +214,14 @@ textarea {
 
 .fa {
 	color: #380823;
+	padding: 0 .75em;
+}
+
+.like-error-box {
+	position: absolute;
+	bottom: -15px;
+	text-align: center;
+	width: 100%;
 }
 
 .new-post-success {
@@ -321,4 +330,90 @@ textarea {
 
 .comment-button:focus {
 	outline: 0;
+}
+
+@media screen and (max-width: 885px) {
+	.welcome-message {
+		font-size: 60px;
+		padding: 20px;
+	}
+
+	.login-form {
+		position: fixed;
+		top: 40px;
+		left: 40%;
+	}
+
+	.new-post-box,
+	.registration-form-box {
+		width: 450px;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	.login-form {
+		margin-top: 15px;
+		width: 100%;
+		left: 0;
+		background-color: #6E9075;
+		padding: 10px;
+	}
+
+	.welcome-banner {
+		height: 200px;
+	}
+
+	.welcome-message {
+		font-size: 40px;
+	}
+
+	.welcome-username {
+		text-align: center;
+	}
+
+	.login-error {
+		margin-left: -40px;
+	}
+
+	.create-button {
+		height: 35px;
+		margin-top: -15px;
+	}
+
+	.post,
+	.comments-section,
+	.edit-delete-box {
+		width: 100%
+	}
+
+	.new-post-box,
+	.registration-form-box {
+		width: 95%;
+	}
+
+	.comment-input {
+		width: 250px;
+	}
+}
+
+@media screen and (max-width: 350px) {
+	.welcome-message {
+		padding-top: 30px;
+	}
+
+	.login-form input {
+		max-width: 100px;
+	}
+
+	.login-error {
+		margin-left: -55px;
+	}
+
+	.signin-prompt {
+		margin-left: -20px;
+	}
+
+	.comment-input {
+		width: 200px;
+	}
 }

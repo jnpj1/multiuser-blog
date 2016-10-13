@@ -30,7 +30,6 @@ $(document).ready(function() {
 		}).done(function(data) {
 			var dataSelectorString = '[data-postid="' + data['post_id'] + '"]';
 			if (data['error']) {
-				console.log(this);
 				$(dataSelectorString).find('.like-error').fadeIn(500).html(data.error);
 				setTimeout(function() {
 					$(dataSelectorString).find('.like-error').fadeOut(1000);
