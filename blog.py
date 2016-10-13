@@ -408,10 +408,10 @@ class LikeHandler(Handler):
 		post_id = int(self.request.get('postId'))
 		vote_value = int(self.request.get('voteValue'))
 		post = Post.by_id(post_id)
-		user_id = int(self.user.key().id())
 		new_like_value = post.likes + vote_value
 
 		if self.user:
+			user_id = int(self.user.key().id())
 			if self.user.username == post.author:
 				self.write(json.dumps({'error': "You can't like your own posts.", 'post_id': post_id}))
 			elif Like.check_previous_likes(user_id, post):

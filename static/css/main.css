@@ -212,6 +212,10 @@ textarea {
 	justify-content: space-between;
 }
 
+.modified-box {
+	min-height: 15px;
+}
+
 .fa {
 	color: #380823;
 	padding: 0 .75em;
@@ -347,6 +351,12 @@ textarea {
 	.new-post-box,
 	.registration-form-box {
 		width: 450px;
+	}
+
+	.edit-delete-box {
+		padding: 20px 0 10px 0;
+		background-color: #E7ECEF;
+		text-align: center;
 	}
 }
 

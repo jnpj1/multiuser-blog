@@ -14,9 +14,11 @@
 		<p>{{post.render_text | safe}}</p>
 	</div>
 	<div class="post-footer" data-postid="{{post.key().id()}}">
+		<div class="modified-box">
 		{% if not post.modified == post.created %}
 			<p>Last modified on: {{post.modified.strftime("%b %d")}} at {{post.modified.strftime("%I:%M")}}</p>
 		{% endif %}
+		</div>
 		<div class="like-box">
 			<p class="like-counter">Likes: {{post.likes}}</p>
 			<div class="like-icons">
