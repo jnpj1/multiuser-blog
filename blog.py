@@ -60,9 +60,12 @@ class User(db.Model):
 	@classmethod
 	def login_user(cls, username, password):
 		user = cls.by_username(username)
-		valid_password = validate_pw(username, password, user.password_hash)
-		if user and valid_password:
-			return user
+		if not user:
+			return False
+		else:
+			valid_password = validate_pw(username, password, user.password_hash)
+			if user and valid_password:
+				return user
 
 	@classmethod
 	def register_user(cls, username, password, email = None):
@@ -182,7 +185,6 @@ class Handler(webapp2.RequestHandler):
 			self.render(template, **new_params)
 		else:
 			user = User.login_user(username, password)
-
 			if user:
 				self.login_cookie(user)
 				self.redirect(path, params)
