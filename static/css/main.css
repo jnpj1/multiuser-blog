@@ -404,6 +404,10 @@ textarea {
 	.comment-input {
 		width: 250px;
 	}
+
+	.new-post-success {
+		top: 80px;
+	}
 }
 
 @media screen and (max-width: 350px) {

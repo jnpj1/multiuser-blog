@@ -21,13 +21,14 @@ $(document).ready(function() {
 
 		var urlString = '/post/' + postId + '/'
 
-		// AJAX
+		// AJAX for post request to add like to up/down voted post
 		$.ajax({
 			type: 'post',
 			dataType: 'json',
 			data: data,
 			url: '/like'
 		}).done(function(data) {
+			// Adds error message or updated like count to page
 			var dataSelectorString = '[data-postid="' + data['post_id'] + '"]';
 			if (data['error']) {
 				$(dataSelectorString).find('.like-error').fadeIn(500).html(data.error);
@@ -42,16 +43,18 @@ $(document).ready(function() {
 		});
 	});
 
+	// The following two click handlers show login form
 	$('.login').click(function() {
 		$('.login-form').slideDown('fast');
 		$('.login-error').hide('fast');
 	});
 
-	$('.comment-button').click(function() {
-		$('.comments-form-box').slideToggle('fast');
-	});
-
 	$('.login-alternative').click(function() {
 		$('.login').click();
+	});
+
+	//Shows comment form
+	$('.comment-button').click(function() {
+		$('.comments-form-box').slideToggle('fast');
 	});
 });
