@@ -3,21 +3,25 @@
 		<h3 class="comment-author">{{comment.author}}</h3>
 		<p class="comment-time">{{comment.created.strftime("%b %d")}} at {{comment.created.strftime("%I:%M")}}</p>
 		{% if comment.author == username %}
-			<a class="comment-delete" href="/delete_comment/{{post_id}}?comment={{comment.key().id()}}">Delete</a>
-			<p class="comment-edit">Edit</p>
+			<div class="comment-edit-delete-box">
+				<p class="comment-edit">Edit</p>
+				<a class="comment-delete" href="/delete_comment/{{post_id}}?comment={{comment.key().id()}}">Delete</a>
+			</div>
 		{% endif %}
 	</div>
 	<div class="comment-text-box">
 		<p class="comment-text">{{comment.content}}</p>
 	</div>
-	<div id="editModal" class="modal">
+	<div id="editModal" class="modal box-shadow">
 		<div class="modal-content">
 			<span class="modal-close">X</span>
-			<p>Edit comment:</p>
-			<form method="post" class="comment-edit-form">
-				<input class="comment-input" type="text" name="edited-content" value="{{comment.content}}">
-				<input class="comment-submit" type="submit" name="comment-edit">
-			</form>
+			<div class="modal-form-box">
+			<h3 class="modal-header">Edit comment:</h3>
+				<form method="post" class="comment-edit-form">
+					<input class="comment-input" type="text" name="edited-content" value="{{comment.content}}">
+					<input class="comment-edit-submit" type="submit" name="comment-edit">
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

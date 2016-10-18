@@ -180,6 +180,7 @@ textarea {
 .cancel-button,
 .comment-button,
 .comment-submit,
+.comment-edit-submit,
 .registration-form-button {
 	background-color: #6E9075;
 	color: #FDFDFF;
@@ -297,19 +298,41 @@ textarea {
 	display: none;
 	position: fixed;
 	z-index: 1;
-	width: 300px;
-	height: 100px;
-	left: calc((100% - 300px)/2);
-	top: calc((100% - 100px)/2);
+	width: 310px;
+	height: 150px;
+	left: calc((100% - 310px)/2);
+	top: calc((100% - 150px)/2);
 	background-color: white;
-}
-
-.modal-content {
-	width: 95%;
 }
 
 .modal-close {
 	float: right;
+	padding: 5px;
+}
+
+.modal-form-box {
+	padding: 20px 5px;
+}
+
+.modal-header {
+	color: #380823;
+	padding-bottom: 5px;
+}
+
+.comment-edit-delete-box {
+	display: flex;
+	justify-content: space-between;
+	padding-right: 15px;
+}
+
+.comment-edit {
+	text-decoration: underline;
+}
+
+.comment-edit-submit {
+	width: 60px;
+	margin-top: 10px;
+	margin-left: 125px;
 }
 
 .deleted-post,
@@ -346,6 +369,7 @@ textarea {
 .input-button:hover,
 .comment-button:hover,
 .comment-submit:hover,
+.comment-edit-submit:hover,
 .registration-form-button:hover {
 	text-decoration: underline;
 	cursor: pointer;
@@ -353,7 +377,8 @@ textarea {
 
 .login-submit:hover,
 .login-alternative:hover,
-.modal-close:hover {
+.modal-close:hover,
+.comment-edit:hover {
 	cursor: pointer;
 }
 

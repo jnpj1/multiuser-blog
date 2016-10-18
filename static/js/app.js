@@ -1,3 +1,5 @@
+// Defines ajax functionality for like handling and comment editing
+// Handles some simple form and success/error display functionality
 $(document).ready(function() {
 	$('.new-post-success').fadeOut(3000);
 
@@ -41,41 +43,39 @@ $(document).ready(function() {
 		});
 	});
 
-	// The following two click handlers show login form
+	// Show login form
 	$('.login').click(function() {
 		$('.login-form').slideDown('fast');
 		$('.login-error').hide('fast');
 	});
 
+	// Show login form
 	$('.login-alternative').click(function() {
 		$('.login').click();
 	});
 
-	//Shows new comment form
+	// Shows new comment form
 	$('.comment-button').click(function() {
 		$('.comments-form-box').slideToggle('fast');
 	});
 
-	//Opens modal with comment editing form
+	// Opens modal with comment editing form
 	$('.comment-edit').click(function(event) {
 		var $target = $(event.currentTarget);
 		$target.parents('.comment').find('.modal').css('display', 'block');
 	});
 
-	//Closes modal when user clicks on modal's 'X'
+	// Closes modal when user clicks on modal's 'X'
 	$('.modal-close').click(function(event) {
 		$('.modal').css('display', 'none');
 	});
 
-	//Handles comment editing
+	// Handles comment editing
 	$('.comment-edit-form').on('submit', function(event) {
 		event.preventDefault();
 		var $target = $(event.currentTarget);
-
-		//Get comment ID, post ID of comment's parent, and edited content
 		var postId = $('.post-footer').data('postid');
 		var commentId = $target.parents('.comment').data('commentid');
-
 		var commentSelectorString = '[data-commentid="' + commentId + '"]';
 		var content = $(commentSelectorString).find('input[name="edited-content"]').val();
 
