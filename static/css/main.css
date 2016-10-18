@@ -17,6 +17,7 @@ header {
 	left: 0;
 	width: 100%;
 	height: 75px;
+	z-index: 99;
 }
 
 a {

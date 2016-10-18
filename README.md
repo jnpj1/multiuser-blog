@@ -1,7 +1,7 @@
 # Multiuser Blog
 
 ## To run
-Download all files in repository and run blog.py.  Alternatively, view [deployed app](https://multiuserblog-146317.appspot.com/register).
+Download all files in repository and run blog.py.  Alternatively, view [deployed app](https://multiuserblog-146317.appspot.com).
 
 ## Register for an account
 From any page, click the 'register' link at the top right of the page.
