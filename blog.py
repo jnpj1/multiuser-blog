@@ -395,6 +395,19 @@ class DeletePost(Handler):
 		else:
 			self.redirect('/')
 
+class EditComment(Handler):
+	def post(self):
+		comment_id = int(self.request.get('commentId'))
+		post_id = int(self.request.get('postId'))
+		post = Post.by_id(post_id)
+		comment = Comment.by_id(comment_id, post)
+
+		if self.user.username == comment.author:
+			comment.content = self.request.get('newContent')
+			comment.put()
+		else:
+			self.redirect('/')
+
 class DeleteComment(Handler):
 	def get(self, post_id):
 		post = Post.by_id(post_id)
@@ -415,26 +428,27 @@ class LikeHandler(Handler):
 		if self.user:
 			user_id = int(self.user.key().id())
 			if self.user.username == post.author:
-				self.write(json.dumps({'error': "You can't like your own posts.", 'post_id': post_id}))
+				self.write(json.dumps({'error': "You can't like your own posts."}))
 			elif Like.check_previous_likes(user_id, post):
-				self.write(json.dumps({'error': "You can't like a post multiple times.", 'post_id': post_id}))
+				self.write(json.dumps({'error': "You can't like a post multiple times."}))
 			else:
 				new_like = Like(user_id = user_id, value = vote_value, parent = post)
 				new_like.put()
 				post.likes = new_like_value
 				post.put()
-				self.write(json.dumps({'likes': new_like_value, 'post_id': post_id}))
+				self.write(json.dumps({'likes': new_like_value}))
 		else:
-			self.write(json.dumps({'error': "You must be logged in to like a post.", 'post_id': post_id}))
+			self.write(json.dumps({'error': "You must be logged in to like a post."}))
 
 app = webapp2.WSGIApplication([('/', MainPage),
 								('/register', RegistrationPage),
 								('/logout', Logout),
-								('/newpost', CreatePost),
 								('/post/(\d+)', PostPermalink),
+								('/newpost', CreatePost),
 								('/edit/(\d+)', EditPost),
 								('/delete/(\d+)', DeletePost),
 								('/delete_comment/(\d+)', DeleteComment),
+								('/edit_comment', EditComment),
 								('/like', LikeHandler)
 								],
 								debug = True)

@@ -3,8 +3,8 @@ $(document).ready(function() {
 
 	// Process clicking of like/dislike icons
 	$('.fa').click(function(event) {
-		$target = $(event.currentTarget);
-		postId = $target.parents('.post-footer').data('postid')
+		var $target = $(event.currentTarget);
+		var postId = $target.parents('.post-footer').data('postid');
 
 		// Assign value of vote based on icon clicked
 		var voteValue = 0;
@@ -19,8 +19,6 @@ $(document).ready(function() {
 			'postId' : postId
 		}
 
-		var urlString = '/post/' + postId + '/'
-
 		// AJAX for post request to add like to up/down voted post
 		$.ajax({
 			type: 'post',
@@ -29,7 +27,7 @@ $(document).ready(function() {
 			url: '/like'
 		}).done(function(data) {
 			// Adds error message or updated like count to page
-			var dataSelectorString = '[data-postid="' + data['post_id'] + '"]';
+			var dataSelectorString = '[data-postid="' + postId + '"]';
 			if (data['error']) {
 				$(dataSelectorString).find('.like-error').fadeIn(500).html(data.error);
 				setTimeout(function() {
@@ -53,8 +51,52 @@ $(document).ready(function() {
 		$('.login').click();
 	});
 
-	//Shows comment form
+	//Shows new comment form
 	$('.comment-button').click(function() {
 		$('.comments-form-box').slideToggle('fast');
+	});
+
+	//Opens modal with comment editing form
+	$('.comment-edit').click(function(event) {
+		var $target = $(event.currentTarget);
+		$target.parents('.comment').find('.modal').css('display', 'block');
+	});
+
+	//Closes modal when user clicks on modal's 'X'
+	$('.modal-close').click(function(event) {
+		$('.modal').css('display', 'none');
+	});
+
+	//Handles comment editing
+	$('.comment-edit-form').on('submit', function(event) {
+		event.preventDefault();
+		var $target = $(event.currentTarget);
+
+		//Get comment ID, post ID of comment's parent, and edited content
+		var postId = $('.post-footer').data('postid');
+		var commentId = $target.parents('.comment').data('commentid');
+
+		var commentSelectorString = '[data-commentid="' + commentId + '"]';
+		var content = $(commentSelectorString).find('input[name="edited-content"]').val();
+
+		var data = {
+			'postId' : postId,
+			'commentId' : commentId,
+			'newContent' : content
+		};
+
+		// AJAX for post request to edit comment content
+		$.ajax({
+			type: 'post',
+			data: data,
+			url: '/edit_comment'
+		}).done(function(data) {
+			// Adds updated content to page
+			$(commentSelectorString).find('.comment-text').html(content);
+			console.log($(commentSelectorString));
+			$('.modal-close').click();
+		}).error(function(error) {
+			alert('Failed to update comment.  Please try again.')
+		});
 	});
 });
