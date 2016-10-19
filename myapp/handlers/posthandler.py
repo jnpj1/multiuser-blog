@@ -109,9 +109,9 @@ class EditPost(Handler):
 
 class DeletePost(Handler):
 	def get(self, post_id):
-		post = Post.by_id(post_id)
-		subject = post.subject
 		if self.user:
+			post = Post.by_id(post_id)
+			subject = post.subject
 			if post.author == self.user.username:
 				comments = Comment.all_comments(post)
 				for comment in comments:
